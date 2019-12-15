@@ -1,1 +1,1 @@
-datapath = "../dataset/data"
+data_path = "../dataset/data"
