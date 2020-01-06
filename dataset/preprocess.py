@@ -1,6 +1,7 @@
 import os
 import csv
 from utils.config import *
+from os import path
 
 
 def genconfig():
@@ -9,11 +10,11 @@ def genconfig():
     folders.sort()
     images, labels = [], []
     for i in range(n):
-        pics = os.listdir(data_path + folders[i])
+        pics = os.listdir(path.join(data_path, folders[i]))
         m = len(pics)
         pics.sort()
         for j in range(m):
-            images.append(data_path + folders[i] + '/' + pics[j])
+            images.append(path.join(data_path, folders[i], pics[j]))
             labels.append((folders[i], pics[j]))
 
     csvfile = open('./image_config.csv', 'w')

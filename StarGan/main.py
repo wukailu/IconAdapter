@@ -33,7 +33,7 @@ def main(config):
     if config.dataset in ['RaFD', 'Both']:
         rafd_loader = get_loader(config.rafd_image_dir, None, None,
                                  config.rafd_crop_size, config.image_size, config.batch_size,
-                                 'RaFD', config.mode, config.num_workers)
+                                 'RaFD', config.mode, config.num_workers, config.channel)
     
 
     # Solver for training and testing StarGAN.
@@ -67,6 +67,7 @@ if __name__ == '__main__':
     parser.add_argument('--lambda_cls', type=float, default=1, help='weight for domain classification loss')
     parser.add_argument('--lambda_rec', type=float, default=10, help='weight for reconstruction loss')
     parser.add_argument('--lambda_gp', type=float, default=10, help='weight for gradient penalty')
+    parser.add_argument('--channel', type=int, default=3, help="3 for rgb, 4 with alpha")
     
     # Training configuration.
     parser.add_argument('--dataset', type=str, default='CelebA', choices=['CelebA', 'RaFD', 'Both'])

@@ -3,6 +3,7 @@ import cv2
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms as T
 from PIL import Image
+import numpy as np
 
 
 class Icon(Dataset):
@@ -33,7 +34,7 @@ class Icon(Dataset):
         self.shape = image_size
         self.transform = transforms
         if self.transform is None:
-            self.transform = T.Compose([T.ToTensor(), T.Normalize(mean=0.5, std=0.5)])
+            self.transform = T.Compose([T.ToTensor(), T.Normalize(mean=np.ones(channel)*0.5, std=np.ones(channel)*0.5)])
 
     def __getitem__(self, idx):
         img = Image.fromarray(cv2.imread(self.img[idx], cv2.IMREAD_UNCHANGED if self.channel == 4 else cv2.IMREAD_COLOR))

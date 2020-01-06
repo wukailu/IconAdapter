@@ -2,6 +2,7 @@ from torch.utils import data
 from torchvision import transforms as T
 from torchvision.datasets import ImageFolder
 from PIL import Image
+import numpy as np
 import torch
 import os
 import random
@@ -49,7 +50,7 @@ class CelebA(data.Dataset):
                 idx = self.attr2idx[attr_name]
                 label.append(values[idx] == '1')
 
-            if (i+1) < 2000:
+            if (i + 1) < 2000:
                 self.test_dataset.append([filename, label])
             else:
                 self.train_dataset.append([filename, label])
@@ -68,8 +69,14 @@ class CelebA(data.Dataset):
         return self.num_images
 
 
-def get_loader(image_dir, attr_path, selected_attrs, crop_size=178, image_size=128, 
-               batch_size=16, dataset='CelebA', mode='train', num_workers=1):
+def rgba_loader(path):
+    with open(path, 'rb') as f:
+        img = Image.open(f)
+        return img.convert('RGBA')
+
+
+def get_loader(image_dir, attr_path, selected_attrs, crop_size=178, image_size=128,
+               batch_size=16, dataset='CelebA', mode='train', num_workers=1, channel=3):
     """Build and return a data loader."""
     transform = []
     if mode == 'train':
@@ -77,16 +84,19 @@ def get_loader(image_dir, attr_path, selected_attrs, crop_size=178, image_size=1
     transform.append(T.CenterCrop(crop_size))
     transform.append(T.Resize(image_size))
     transform.append(T.ToTensor())
-    transform.append(T.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)))
+    transform.append(T.Normalize(mean=np.ones(channel)*0.5, std=np.ones(channel)*0.5))
     transform = T.Compose(transform)
 
     if dataset == 'CelebA':
         dataset = CelebA(image_dir, attr_path, selected_attrs, transform, mode)
     elif dataset == 'RaFD':
-        dataset = ImageFolder(image_dir, transform)
+        if channel == 4:
+            dataset = ImageFolder(image_dir, transform, loader=rgba_loader)
+        else:
+            dataset = ImageFolder(image_dir, transform)
 
     data_loader = data.DataLoader(dataset=dataset,
                                   batch_size=batch_size,
-                                  shuffle=(mode=='train'),
+                                  shuffle=(mode == 'train'),
                                   num_workers=num_workers)
     return data_loader

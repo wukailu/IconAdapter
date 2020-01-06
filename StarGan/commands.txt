@@ -1,0 +1,32 @@
+# Train StarGAN on custom datasets
+python main.py --mode train --dataset RaFD --rafd_crop_size CROP_SIZE --image_size IMG_SIZE \
+               --c_dim LABEL_DIM --rafd_image_dir TRAIN_IMG_DIR \
+               --sample_dir stargan_custom/samples --log_dir stargan_custom/logs \
+               --model_save_dir stargan_custom/models --result_dir stargan_custom/results
+
+# Test StarGAN on custom datasets
+python main.py --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_size IMG_SIZE \
+               --c_dim LABEL_DIM --rafd_image_dir TEST_IMG_DIR \
+               --sample_dir stargan_custom/samples --log_dir stargan_custom/logs \
+               --model_save_dir stargan_custom/models --result_dir stargan_custom/results
+
+# Train StarGAN on icon datasets of 128*128
+python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 128 \
+               --c_dim 111 --rafd_image_dir "../dataset/" \
+               --sample_dir results/stargan_128/samples   --log_dir results/stargan_128/logs \
+               --model_save_dir results/stargan_128/models --result_dir results/stargan_128/results
+
+# Train StarGAN on icon datasets
+python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 64 \
+               --c_dim 111 --rafd_image_dir "../dataset/" \
+               --sample_dir results/stargan_64/samples   --log_dir results/stargan_64/logs \
+               --model_save_dir results/stargan_64/models --result_dir results/stargan_64/results \
+               --d_repeat_num 5
+
+# Test StarGAN on custom datasets
+python main.py --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_size IMG_SIZE \
+               --c_dim LABEL_DIM --rafd_image_dir TEST_IMG_DIR \
+               --sample_dir stargan_custom/samples --log_dir stargan_custom/logs \
+               --model_save_dir stargan_custom/models --result_dir stargan_custom/results
+
+export PYTHONPATH="/home/wukai/projects/IconAdapter/StarGan/:/home/wukai/projects/IconAdapter/"
