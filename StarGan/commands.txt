@@ -12,16 +12,28 @@ python main.py --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_siz
 
 # Train StarGAN on icon datasets of 128*128
 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 128 \
-               --c_dim 111 --rafd_image_dir "../dataset/" \
+               --c_dim 111 --rafd_image_dir icon \
                --sample_dir results/stargan_128/samples   --log_dir results/stargan_128/logs \
                --model_save_dir results/stargan_128/models --result_dir results/stargan_128/results
 
-# Train StarGAN on icon datasets
+# Train StarGAN on icon datasets of 64*64
 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 64 \
-               --c_dim 111 --rafd_image_dir "../dataset/" \
+               --c_dim 111 --rafd_image_dir icon \
                --sample_dir results/stargan_64/samples   --log_dir results/stargan_64/logs \
                --model_save_dir results/stargan_64/models --result_dir results/stargan_64/results \
                --d_repeat_num 5
+
+CUDA_VISIBLE_DEVICES=2 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 128 \
+               --c_dim 111 --rafd_image_dir icon \
+               --sample_dir stargan_custom/samples --log_dir stargan_custom/logs \
+               --model_save_dir stargan_custom/models --result_dir stargan_custom/results --channel 4
+
+CUDA_VISIBLE_DEVICES=3 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 64 \
+               --c_dim 111 --rafd_image_dir icon --sample_dir result/stargan_width/samples \
+               --log_dir result/stargan_width/logs  --model_save_dir result/stargan_width/models \
+               --result_dir result/stargan_width/results \
+               --channel 4 --d_conv_dim 256 --g_conv_dim 256 --d_repeat_num 5
+
 
 # Test StarGAN on custom datasets
 python main.py --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_size IMG_SIZE \
@@ -29,4 +41,11 @@ python main.py --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_siz
                --sample_dir stargan_custom/samples --log_dir stargan_custom/logs \
                --model_save_dir stargan_custom/models --result_dir stargan_custom/results
 
+
+
 export PYTHONPATH="/home/wukai/projects/IconAdapter/StarGan/:/home/wukai/projects/IconAdapter/"
+
+python main.py --mode test --dataset RaFD --rafd_crop_size 256 --image_size 128 \
+               --c_dim 111 --rafd_image_dir icon \
+               --sample_dir results/stargan_128/samples   --log_dir results/stargan_128/logs \
+               --model_save_dir results/stargan_128/models --result_dir results/stargan_128/results
