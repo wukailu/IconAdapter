@@ -9,6 +9,13 @@ def str2bool(v):
     return v.lower() in ('true')
 
 def main(config):
+    # path process
+    if config.name != '':
+        config.log_dir = "results/"+config.name+"/logs"
+        config.model_save_dir = "results/"+config.name+"/models"
+        config.sample_dir = "results/"+config.name+"/samples"
+        config.result_dir = "results/"+config.name+"/test_result"
+
     # For fast training.
     cudnn.benchmark = True
 
@@ -99,6 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_save_dir', type=str, default='stargan/models')
     parser.add_argument('--sample_dir', type=str, default='stargan/samples')
     parser.add_argument('--result_dir', type=str, default='stargan/results')
+    parser.add_argument('--name', type=str, default='')
 
     # Step size.
     parser.add_argument('--log_step', type=int, default=10)
