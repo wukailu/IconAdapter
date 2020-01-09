@@ -77,6 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('--channel', type=int, default=3, help="3 for rgb, 4 with alpha")
     
     # Training configuration.
+    parser.add_argument('--newloss', type=bool, default=False, choices=[True, False])
     parser.add_argument('--dataset', type=str, default='CelebA', choices=['CelebA', 'RaFD', 'Both'])
     parser.add_argument('--batch_size', type=int, default=16, help='mini-batch size')
     parser.add_argument('--num_iters', type=int, default=200000, help='number of total iterations for training D')

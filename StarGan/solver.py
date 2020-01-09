@@ -44,6 +44,7 @@ class Solver(object):
         self.beta2 = config.beta2
         self.resume_iters = config.resume_iters
         self.selected_attrs = config.selected_attrs
+        self.newloss = config.newloss
 
         # Test configurations.
         self.test_iters = config.test_iters
@@ -257,7 +258,10 @@ class Solver(object):
             d_loss_gp = self.gradient_penalty(out_src, x_hat)
 
             # Backward and optimize.
-            d_loss = d_loss_real + d_loss_fake + self.lambda_cls * d_loss_cls + self.lambda_gp * d_loss_gp
+            if self.newloss:
+                d_loss = torch.sigmoid(d_loss_real) + torch.sigmoid(d_loss_fake) + d_loss_cls + d_loss_gp
+            else:
+                d_loss = d_loss_real + d_loss_fake + self.lambda_cls * d_loss_cls + self.lambda_gp * d_loss_gp
             self.reset_grad()
             d_loss.backward()
             self.d_optimizer.step()

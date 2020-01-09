@@ -25,8 +25,17 @@ python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 64 
 
 CUDA_VISIBLE_DEVICES=2 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 128 \
                --c_dim 111 --rafd_image_dir icon \
-               --sample_dir stargan_custom/samples --log_dir stargan_custom/logs \
-               --model_save_dir stargan_custom/models --result_dir stargan_custom/results --channel 4
+               --name twotimes  --d_conv_dim 128 --g_conv_dim 128 --d_repeat_num 5
+               --n_critic 10
+
+CUDA_VISIBLE_DEVICES=0 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 128 \
+               --c_dim 111 --rafd_image_dir icon \
+               --name twice_smaller  --d_conv_dim 32 --g_conv_dim 32 --d_repeat_num 5
+
+CUDA_VISIBLE_DEVICES=1 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 128 \
+               --c_dim 111 --rafd_image_dir icon \
+               --name largeD  --d_conv_dim 128 --d_repeat_num 5
+               --n_critic 10
 
 CUDA_VISIBLE_DEVICES=3 python main.py --mode train --dataset RaFD --rafd_crop_size 256 --image_size 64 \
                --c_dim 111 --rafd_image_dir icon --sample_dir result/stargan_width/samples \
@@ -46,6 +55,11 @@ python main.py --mode test --dataset RaFD --rafd_crop_size CROP_SIZE --image_siz
 export PYTHONPATH="/home/wukai/projects/IconAdapter/StarGan/:/home/wukai/projects/IconAdapter/"
 
 python main.py --mode test --dataset RaFD --rafd_crop_size 256 --image_size 128 \
-               --c_dim 111 --rafd_image_dir icon \
+               --c_dim 111 --rafd_image_dir icon_test \
                --sample_dir results/stargan_128/samples   --log_dir results/stargan_128/logs \
                --model_save_dir results/stargan_128/models --result_dir results/stargan_128/results
+
+
+python main.py --mode test --dataset RaFD --rafd_crop_size 256 --image_size 64 \
+               --c_dim 111 --rafd_image_dir icon_test \
+               --name twice_smaller --test_iters 90000 --d_repeat_num 5 --d_conv_dim 32 --g_conv_dim 32
