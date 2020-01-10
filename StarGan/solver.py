@@ -1,6 +1,6 @@
 from model import Generator
 from model import Discriminator
-from utils.utils import convert_image
+from utils.utils import convert_image, save_image
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -568,16 +568,15 @@ class Solver(object):
                         x_fake_list_x4.append(scaleup(model, convert_image(self.denorm(self.G(x_real, c_trg)), nrow=1, padding=0, op = 1)).astype(np.uint8))
 
                 # Save the translated images.
-                img = Image.fromarray(np.concatenate(x_fake_list, axis=1))
-                result_path = os.path.join(self.result_dir, '{}-images.png'.format(i + 1))
-                img.save(result_path)
-
-                # if self.output_few != 0:
-                #     x_fake_list = x_fake_list[0:self.output_few]
-                # x_concat = torch.cat(x_fake_list, dim=3)
-                # result_path = os.path.join(self.result_dir, '{}-images.png'.format(i+1))
-                # save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
-                print('Saved real and fake images into {}...'.format(result_path))
+                if flg:
+                    img = Image.fromarray(np.concatenate(x_fake_list, axis=1))
+                    result_path = os.path.join(self.result_dir, '{}-images.png'.format(i + 1))
+                    img.save(result_path)
+                else:
+                    x_concat = torch.cat(x_fake_list, dim=3)
+                    result_path = os.path.join(self.result_dir, '{}-images.png'.format(i+1))
+                    save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
+                    print('Saved real and fake images into {}...'.format(result_path))
 
                 if flg:
                     img_x4 = Image.fromarray(np.concatenate(x_fake_list_x4, axis=1))
