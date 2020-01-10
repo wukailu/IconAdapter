@@ -542,7 +542,7 @@ class Solver(object):
         flg = False
         if self.scale_weight_file != None:
             flg = True
-            model = SRDenseNet().to('cpu')
+            model = SRDenseNet().to('cuda')
             state_dict = model.state_dict()
             for n, p in torch.load(self.scale_weight_file, map_location=lambda storage, loc: storage).items():
                 if n in state_dict.keys():
