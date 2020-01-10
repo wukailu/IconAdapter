@@ -17,7 +17,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     cudnn.benchmark = True
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cpu')
 
     model = SRDenseNet().to(device)
 
@@ -38,6 +38,7 @@ if __name__ == '__main__':
     image_height = image.height * args.scale
 
     hr = image.resize((image_width, image_height), resample=pil_image.BICUBIC)
+    hr.save(args.image_file.replace('.', '_bicubic_x{}.'.format(args.scale)))
     lr = hr.resize((hr.width // args.scale, hr.height // args.scale), resample=pil_image.BICUBIC)
     bicubic = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
 
