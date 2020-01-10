@@ -7,7 +7,9 @@ import numpy as np
 import os
 import time
 import datetime
-
+from test import scaleup
+from models import SRDenseNet
+import PIL.Image as Image
 
 class Solver(object):
     """Solver for training and testing StarGAN."""
@@ -526,15 +528,28 @@ class Solver(object):
 
     def test(self):
         """Translate images using StarGAN trained on a single dataset."""
+        #Result images were upscaled by SRDenseNet 64 * 64 -> 256 * 256 for each icon
         # Load the trained generator.
         self.restore_model(self.test_iters)
-        
+
         # Set data loader.
         if self.dataset == 'CelebA':
             data_loader = self.celeba_loader
         elif self.dataset == 'RaFD':
             data_loader = self.rafd_loader
-        
+
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        model = SRDenseNet().to(device)
+
+        state_dict = model.state_dict()
+        for n, p in torch.load(self.scale_weight_file, map_location=lambda storage, loc: storage).items():
+            if n in state_dict.keys():
+                state_dict[n].copy_(p)
+            else:
+                raise KeyError(n)
+
+        model.eval()
+
         with torch.no_grad():
             for i, (x_real, c_org) in enumerate(data_loader):
 
@@ -543,14 +558,16 @@ class Solver(object):
                 c_trg_list = self.create_labels(c_org, self.c_dim, self.dataset, self.selected_attrs)
 
                 # Translate images.
-                x_fake_list = [x_real]
+                x_fake_list = [scaleup(model, convert_image(self.denorm(x_real), nrow=1, padding=0)).astype(np.uint8)]
                 for c_trg in c_trg_list:
-                    x_fake_list.append(self.G(x_real, c_trg))
-
+                    x_fake_list.append(
+                        scaleup(model, convert_image(self.denorm(self.G(x_real, c_trg)), nrow=1, padding=0)).astype(
+                            np.uint8))
                 # Save the translated images.
-                x_concat = torch.cat(x_fake_list, dim=3)
-                result_path = os.path.join(self.result_dir, '{}-images.png'.format(i+1))
-                save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
+                img = Image.fromarray(np.concatenate(x_fake_list, axis=1))
+
+                result_path = os.path.join(self.result_dir, '{}-images.png'.format(i + 1))
+                img.save(result_path)
                 print('Saved real and fake images into {}...'.format(result_path))
 
     def test_multi(self):
