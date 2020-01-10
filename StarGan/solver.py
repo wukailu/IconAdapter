@@ -539,16 +539,17 @@ class Solver(object):
         elif self.dataset == 'RaFD':
             data_loader = self.rafd_loader
 
-        model = SRDenseNet().to('cpu')
-
-        state_dict = model.state_dict()
-        for n, p in torch.load(self.scale_weight_file, map_location=lambda storage, loc: storage).items():
-            if n in state_dict.keys():
-                state_dict[n].copy_(p)
-            else:
-                raise KeyError(n)
-
-        model.eval()
+        flg = False
+        if self.scale_weight_file != None:
+            flg = True
+            model = SRDenseNet().to('cpu')
+            state_dict = model.state_dict()
+            for n, p in torch.load(self.scale_weight_file, map_location=lambda storage, loc: storage).items():
+                if n in state_dict.keys():
+                    state_dict[n].copy_(p)
+                else:
+                    raise KeyError(n)
+            model.eval()
 
         with torch.no_grad():
             for i, (x_real, c_org) in enumerate(data_loader):
@@ -558,17 +559,25 @@ class Solver(object):
                 c_trg_list = self.create_labels(c_org, self.c_dim, self.dataset, self.selected_attrs)
 
                 # Translate images.
-                x_fake_list = [scaleup(model, convert_image(self.denorm(x_real), nrow=1, padding=0)).astype(np.uint8)]
+                x_fake_list = [convert_image(self.denorm(x_real), nrow=1, padding=0)]
+                if flg:
+                    x_fake_list_x4 = [scaleup(model, convert_image(self.denorm(x_real), nrow=1, padding=0, op = 1)).astype(np.uint8)]
                 for c_trg in c_trg_list:
-                    x_fake_list.append(
-                        scaleup(model, convert_image(self.denorm(self.G(x_real, c_trg)), nrow=1, padding=0)).astype(
-                            np.uint8))
+                    x_fake_list.append(convert_image(self.denorm(self.G(x_real, c_trg)), nrow=1, padding=0))
+                    if flg:
+                        x_fake_list_x4.append(scaleup(model, convert_image(self.denorm(self.G(x_real, c_trg)), nrow=1, padding=0, op = 1)).astype(np.uint8))
+
                 # Save the translated images.
                 img = Image.fromarray(np.concatenate(x_fake_list, axis=1))
-
                 result_path = os.path.join(self.result_dir, '{}-images.png'.format(i + 1))
                 img.save(result_path)
                 print('Saved real and fake images into {}...'.format(result_path))
+
+                if flg:
+                    img_x4 = Image.fromarray(np.concatenate(x_fake_list_x4, axis=1))
+                    result_path = os.path.join(self.result_dir, '{}-images_x4.png'.format(i + 1))
+                    img_x4.save(result_path)
+                    print('Saved real and fake images into {}...'.format(result_path))
 
     def test_multi(self):
         """Translate images using StarGAN trained on multiple datasets."""
