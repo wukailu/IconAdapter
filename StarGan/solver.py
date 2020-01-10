@@ -571,6 +571,12 @@ class Solver(object):
                 img = Image.fromarray(np.concatenate(x_fake_list, axis=1))
                 result_path = os.path.join(self.result_dir, '{}-images.png'.format(i + 1))
                 img.save(result_path)
+
+                # if self.output_few != 0:
+                #     x_fake_list = x_fake_list[0:self.output_few]
+                # x_concat = torch.cat(x_fake_list, dim=3)
+                # result_path = os.path.join(self.result_dir, '{}-images.png'.format(i+1))
+                # save_image(self.denorm(x_concat.data.cpu()), result_path, nrow=1, padding=0)
                 print('Saved real and fake images into {}...'.format(result_path))
 
                 if flg:
