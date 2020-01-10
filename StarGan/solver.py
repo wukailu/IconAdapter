@@ -1,6 +1,6 @@
 from model import Generator
 from model import Discriminator
-from utils.utils import save_image
+from utils.utils import convert_image
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -50,6 +50,7 @@ class Solver(object):
 
         # Test configurations.
         self.test_iters = config.test_iters
+        self.scale_weight_file = config.scale_weight_file
 
         # Miscellaneous.
         self.use_tensorboard = config.use_tensorboard
@@ -538,8 +539,7 @@ class Solver(object):
         elif self.dataset == 'RaFD':
             data_loader = self.rafd_loader
 
-        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        model = SRDenseNet().to(device)
+        model = SRDenseNet().to('cpu')
 
         state_dict = model.state_dict()
         for n, p in torch.load(self.scale_weight_file, map_location=lambda storage, loc: storage).items():

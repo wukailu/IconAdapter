@@ -7,7 +7,7 @@ from util import convert_ycbcr_to_rgb, preprocess
 def scaleup(model, img):
 
     cudnn.benchmark = True
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cpu')
 
     image = img.convert('RGB')
 
