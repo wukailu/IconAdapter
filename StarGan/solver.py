@@ -607,6 +607,12 @@ class Solver(object):
                 result_path = os.path.join(self.result_dir, '{}-images.png'.format(i + 1))
                 img.save(result_path)
 
+                h, w = img.size
+                img = img.resize((h * 4, w * 4), resample=Image.BICUBIC)
+                result_path = os.path.join(self.result_dir, '{}-images_x4_bicubic.png'.format(i + 1))
+                img.save(result_path)
+                print('Saved real and fake images into {}...'.format(result_path))
+
                 img_x4 = Image.fromarray(np.concatenate(x_fake_list_x4, axis=1))
                 result_path = os.path.join(self.result_dir, '{}-images_x4.png'.format(i + 1))
                 img_x4.save(result_path)
