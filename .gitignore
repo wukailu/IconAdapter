@@ -129,3 +129,8 @@ dmypy.json
 .pyre/
 
 dataset/data/
+StarGan/.idea/deployment.xml
+StarGan/.idea/deployment.xml
+StarGan/.idea/misc.xml
+*.iml
+StarGan/.idea/vcs.xml

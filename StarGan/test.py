@@ -2,7 +2,7 @@ import torch
 import torch.backends.cudnn as cudnn
 import numpy as np
 import PIL.Image as pil_image
-from util import convert_ycbcr_to_rgb, preprocess
+from utils_super_resolution import convert_ycbcr_to_rgb, preprocess
 
 def scaleup(model, img):
 
