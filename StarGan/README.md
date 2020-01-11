@@ -1,6 +1,6 @@
 # StarGan
 
-This is performance of StarGan on this task.
+See `examples.jpg` for Star-GAN result examples.
 
 ## Test
 
